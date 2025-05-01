@@ -1,6 +1,16 @@
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
-import { HTTPException } from "hono/http-exception";
+import { db } from "./db/index.js";
+import { usersTable } from "./db/schema.js";
+import { z } from "zod";
+import { validator } from "hono/validator";
+
+const schema = z.object({
+  username: z.string(),
+  password: z.string(),
+  email: z.string(),
+  age: z.number(),
+});
 
 const app = new Hono();
 
@@ -50,19 +60,44 @@ app.post("/login", async (c) => {
   });
 });
 
-app.post("/auth", async (c, next) => {
-  // authentication
-  const authorized = false;
-  if (!authorized) {
-    throw new HTTPException(401, { message: "Custom error message" });
-  }
-  await next();
-});
+app.post(
+  "/auth",
+  validator("form", (val, c) => {
+    const parsed = schema.safeParse(val);
+    if (!parsed.success) {
+      return c.json(
+        {
+          success: false,
+          message: "Invalid!",
+          validation: parsed.error,
+        },
+        401,
+      );
+    }
+    return parsed.data;
+  }),
+  async (c) => {
+    const body = c.req.valid("form");
+    const { username, password, email } = body;
 
-// app.onError((err, c) => {
-//   console.error(`${err}`);
-//   return c.json({ error: "Custom Error Message" }, 500);
-// });
+    const newUser = await db
+      .insert(usersTable)
+      .values({
+        name: username,
+        age: 30,
+        email: email,
+        password,
+      })
+      .returning({
+        id: usersTable.id,
+      });
+
+    return c.json({
+      success: true,
+      data: newUser,
+    });
+  },
+);
 
 serve(
   {
