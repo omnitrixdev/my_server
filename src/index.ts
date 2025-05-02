@@ -5,7 +5,7 @@ import { routes } from "./routes/index.js";
 const app = new Hono();
 
 // Mount the API routes with /api/v1 prefix
-app.route('/api/v1', routes);
+app.route("/api/v1", routes);
 
 // Health check endpoint
 app.get("/", (c) => {

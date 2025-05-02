@@ -1,12 +1,12 @@
-import { Hono } from 'hono';
-import { db } from '../db/index.js';
-import { usersTable } from '../db/schema.js';
-import { eq } from 'drizzle-orm';
+import { Hono } from "hono";
+import { db } from "../db/index.js";
+import { usersTable } from "../db/schema.js";
+import { eq } from "drizzle-orm";
 
 const userRoutes = new Hono();
 
 // Get all users
-userRoutes.get('/', async (c) => {
+userRoutes.get("/", async (c) => {
   const users = await db.select().from(usersTable);
   return c.json({
     success: true,
@@ -15,8 +15,8 @@ userRoutes.get('/', async (c) => {
 });
 
 // Get user by ID
-userRoutes.get('/:id', async (c) => {
-  const id = c.req.param('id');
+userRoutes.get("/:id", async (c) => {
+  const id = c.req.param("id");
   const user = await db
     .select()
     .from(usersTable)
@@ -27,9 +27,9 @@ userRoutes.get('/:id', async (c) => {
     return c.json(
       {
         success: false,
-        message: 'User not found',
+        message: "User not found",
       },
-      404
+      404,
     );
   }
 
@@ -39,4 +39,4 @@ userRoutes.get('/:id', async (c) => {
   });
 });
 
-export { userRoutes }; 
+export { userRoutes };
