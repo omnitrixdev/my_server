@@ -1,7 +1,7 @@
-import { relations } from "drizzle-orm";
-import { integer, pgTable, varchar, timestamp } from "drizzle-orm/pg-core";
+import { relations } from 'drizzle-orm';
+import { integer, pgTable, varchar, timestamp } from 'drizzle-orm/pg-core';
 
-export const usersTable = pgTable("users", {
+export const usersTable = pgTable('users', {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
   name: varchar({ length: 255 }).notNull(),
   age: integer().notNull(),
@@ -9,7 +9,7 @@ export const usersTable = pgTable("users", {
   password: varchar({ length: 255 }).notNull(),
 });
 
-export const profile = pgTable("profile", {
+export const profile = pgTable('profile', {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
   userId: integer()
     .notNull()
@@ -17,7 +17,7 @@ export const profile = pgTable("profile", {
   bio: varchar({ length: 255 }).notNull(),
 });
 
-export const products = pgTable("products", {
+export const products = pgTable('products', {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
   name: varchar({ length: 255 }).notNull(),
   description: varchar({ length: 1000 }),
@@ -25,8 +25,8 @@ export const products = pgTable("products", {
   userId: integer()
     .notNull()
     .references(() => usersTable.id),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
 
 export const userRelations = relations(usersTable, ({ one, many }) => ({

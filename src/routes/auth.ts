@@ -1,19 +1,19 @@
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 
-import { Hono } from "hono";
-import { z } from "zod";
-import { zValidator } from "@hono/zod-validator";
-import { db } from "../db/index.js";
-import { usersTable } from "../db/schema.js";
-import { eq } from "drizzle-orm";
+import { Hono } from 'hono';
+import { z } from 'zod';
+import { zValidator } from '@hono/zod-validator';
+import { db } from '../db/index.js';
+import { usersTable } from '../db/schema.js';
+import { eq } from 'drizzle-orm';
 
 const authRoutes = new Hono();
 
 const registrationSchema = z.object({
   username: z
     .string()
-    .min(3, { message: "Username must be at least 3 characters long" }),
+    .min(3, { message: 'Username must be at least 3 characters long' }),
   email: z.string().email(),
   age: z.preprocess((val) => Number(val), z.number().int().min(0)),
   password: z.string().min(6),
@@ -25,8 +25,8 @@ const loginSchema = z.object({
 });
 
 // Login endpoint
-authRoutes.post("/login", zValidator("json", loginSchema), async (c) => {
-  const { email, password } = c.req.valid("json");
+authRoutes.post('/login', zValidator('json', loginSchema), async (c) => {
+  const { email, password } = c.req.valid('json');
   const { sign } = jwt;
 
   // Find user by email
@@ -40,7 +40,7 @@ authRoutes.post("/login", zValidator("json", loginSchema), async (c) => {
     return c.json(
       {
         success: false,
-        message: "Invalid email or password",
+        message: 'Invalid email or password',
       },
       401,
     );
@@ -52,7 +52,7 @@ authRoutes.post("/login", zValidator("json", loginSchema), async (c) => {
     return c.json(
       {
         success: false,
-        message: "Invalid email or password",
+        message: 'Invalid email or password',
       },
       401,
     );
@@ -63,9 +63,9 @@ authRoutes.post("/login", zValidator("json", loginSchema), async (c) => {
     {
       userId: user[0].id,
     },
-    process.env.JWT_SECRET || "your-secret-key",
+    process.env.JWT_SECRET || 'your-secret-key',
     {
-      expiresIn: "1h",
+      expiresIn: '1h',
     },
   );
 
@@ -84,10 +84,10 @@ authRoutes.post("/login", zValidator("json", loginSchema), async (c) => {
 
 // Registration endpoint
 authRoutes.post(
-  "/register",
-  zValidator("json", registrationSchema),
+  '/register',
+  zValidator('json', registrationSchema),
   async (c) => {
-    const { username, email, age, password } = c.req.valid("json");
+    const { username, email, age, password } = c.req.valid('json');
 
     // Check if user already exists
     const existingUser = await db
@@ -100,7 +100,7 @@ authRoutes.post(
       return c.json(
         {
           success: false,
-          message: "Email already registered",
+          message: 'Email already registered',
         },
         400,
       );
