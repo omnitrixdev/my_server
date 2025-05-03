@@ -17,6 +17,15 @@ export const profile = pgTable('profile', {
   bio: varchar({ length: 255 }).notNull(),
 });
 
+export const categories = pgTable('categories', {
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  name: varchar({ length: 255 }).notNull(),
+  description: varchar({ length: 1000 }),
+  slug: varchar({ length: 255 }).notNull().unique(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
 export const products = pgTable('products', {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
   name: varchar({ length: 255 }).notNull(),
@@ -25,6 +34,9 @@ export const products = pgTable('products', {
   userId: integer()
     .notNull()
     .references(() => usersTable.id),
+  categoryId: integer()
+    .notNull()
+    .references(() => categories.id),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
@@ -39,4 +51,12 @@ export const productRelations = relations(products, ({ one }) => ({
     fields: [products.userId],
     references: [usersTable.id],
   }),
+  category: one(categories, {
+    fields: [products.categoryId],
+    references: [categories.id],
+  }),
+}));
+
+export const categoryRelations = relations(categories, ({ many }) => ({
+  products: many(products),
 }));

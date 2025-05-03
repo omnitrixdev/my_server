@@ -6,8 +6,8 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "format": "npx prettier . --write",
-    "db:generate": "drizzle-kit generate:pg",
-    "db:push": "drizzle-kit push:pg",
+    "db:generate": "pnpm drizzle-kit generate",
+    "db:push": "pnpm drizzle-kit push",
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
